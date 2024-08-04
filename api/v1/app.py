@@ -13,7 +13,7 @@ app.register_blueprint(app_views)
 
 
 @app.teardown_appcontext
-def teardown_appcontext():
+def teardown_appcontext(exception=None):
     """ Closes the storage session after each request."""
     storage.close()
 
