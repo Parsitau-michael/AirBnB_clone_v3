@@ -9,10 +9,10 @@ from models import storage
 @app_views.route('/status')
 def status():
     """ A method that returns a JSON: "status": "OK" """
-    return jsonify({"status": "OK"})
+    return jsonify(status="OK")
 
 
-@app_views.route('/api/v1/stats')
+@app_views.route('/stats')
 def stats():
     """ A method that an endpoint that retrieves the number of each
     objects by type
