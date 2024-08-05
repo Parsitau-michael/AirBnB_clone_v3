@@ -105,7 +105,8 @@ class DBStorage:
         the given class.
         """
         if cls:
-            return self.__session.query(classes[cls]).count()
+            if cls in self.classes:
+                return self.__session.query(classes[cls]).count()
         else:
             total_count = 0
             for clss in classes.values():
