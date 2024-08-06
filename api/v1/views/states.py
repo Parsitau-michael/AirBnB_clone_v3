@@ -9,7 +9,7 @@ from models import storage
 from models.state import State
 
 
-@app_views.route('/states', methods=['GET'])
+@app_views.route('/states', methods=['GET'], strict_slashes=False)
 def get_states():
     """ This method returns all states objects """
     states = storage.all(State)
@@ -17,17 +17,18 @@ def get_states():
     return jsonify(states_list)
 
 
-@app_views.route('/states/<state_id>', methods=['GET'])
+@app_views.route('/states/<state_id>', methods=['GET'], strict_slashes=False)
 def get_state(state_id):
     """ This method returns states objects by id """
-    states = storage.all(State)
-    state = [state.to_dict() for state in states if state['id'] == state_id]
-    if len(state) == 0:
-        abort(404)
-    return jsonify(state)
+    states = storage.all(State).values()
+    for state in states:
+        if state.id == state_id:
+            return jsonify(state.to_dict())
+    abort(404)
 
 
-@app_views.route('/states/<state_id>', methods=['DELETE'])
+@app_views.route('/states/<state_id>', methods=['DELETE'],
+                 strict_slashes=False)
 def delete_state(state_id):
     """ This method deletes a state with id state_id """
     states = storage.all(State)
