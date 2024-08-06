@@ -6,7 +6,7 @@ from api.v1.views import app_views
 from flask import abort, jsonify, make_response, request
 
 
-@app_views.route('/amenities', methods=['GET'])
+@app_views.route('/amenities', methods=['GET'], strict_slashes=False)
 def get_amenities():
     """
     Retrieves a list of all amenities
@@ -16,28 +16,30 @@ def get_amenities():
     return jsonify(list_amenities)
 
 
-@app_views.route('/amenities/<amenity_id>/', methods=['GET'])
+@app_views.route('/amenities/<amenity_id>/', methods=['GET'],
+                 strict_slashes=False)
 def get_amenity(amenity_id):
     """ Retrieves an amenity """
     amenity = storage.get(Amenity, amenity_id)
-    if amenity:
-        return jsonify(amenity.to_dict())
-    else:
+    if not amenity:
         abort(404)
 
+    return jsonify(amenity.to_dict())
 
-@app_views.route('/amenities/<amenity_id>', methods=['DELETE'])
+
+@app_views.route('/amenities/<amenity_id>', methods=['DELETE'],
+                 strict_slashes=False)
 def delete_amenity(amenity_id):
     """
     Deletes an amenity  Object
     """
     amenity = storage.get(Amenity, amenity_id)
-    if amenity:
-        storage.delete(amenity)
-        storage.save()
-        return jsonify({}), 200
-    else:
+    if not amenity:
         abort(404)
+
+    storage.delete(amenity)
+    storage.save()
+    return jsonify({}), 200
 
 
 @app_views.route('/amenities', methods=['POST'])
@@ -77,4 +79,4 @@ def put_amenity(amenity_id):
         if key not in ignore:
             setattr(amenity, key, value)
     storage.save()
-    return make_response(jsonify(amenity.to_dict()), 200)
+    return jsonify(amenity.to_dict()), 200
